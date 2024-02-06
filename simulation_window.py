@@ -3,6 +3,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
 
+import random
+
+maxX = 0
+maxY = 0
 
 class QGraphicsViewWMouse(QGraphicsView):
     def __init__(self, *args, **kwargs):
@@ -21,8 +25,9 @@ class QGraphicsViewWMouse(QGraphicsView):
         if key == Qt.Key_Escape:
             self.close()
 
-class SimulationWindow(QDialog):
+class SimulationManager(QDialog):
     def __init__(self, height, width, *args, **kwargs):
+        self.app = QApplication([])
         super().__init__(*args, **kwargs)
         self.setWindowTitle('Simulation Window')
         self.setLayout(QVBoxLayout())
@@ -37,14 +42,15 @@ class SimulationWindow(QDialog):
         self.view.setSceneRect(0, 0, self.view.width(), self.view.height())
         self.show()
         self.raise_()
-
-
-def create_window(height, width):
-    app = QApplication([])
-    test = SimulationWindow(height, width)
-
-    while True:
-        test.scene.update()
+    
+    def refresh_window(self):
+        self.scene.update()
         qApp.processEvents()
+    
+    def create_circle(self, x, y, radius, color):
+        circle = QGraphicsEllipseItem(x, y, 2 * radius, 2 * radius)
+        circle.setPen(QPen(QBrush(Qt.red), 1))
+        self.scene.addItem(circle)
 
-create_window(800, 600)
+def get_random_position():
+    return (random.randint(0, maxX), random.randint(0, maxY))
