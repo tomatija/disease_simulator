@@ -5,8 +5,14 @@ from PyQt5.QtMultimedia import *
 
 import random
 
-maxX = 0
-maxY = 0
+color_map = {
+    'red': Qt.red,
+    'green': Qt.green,
+    'blue': Qt.blue,
+    'black': Qt.black,
+    'white': Qt.white,
+    'yellow': Qt.yellow
+}
 
 class QGraphicsViewWMouse(QGraphicsView):
     def __init__(self, *args, **kwargs):
@@ -14,7 +20,7 @@ class QGraphicsViewWMouse(QGraphicsView):
         self.setMouseTracking(True)
     
     def mousePressEvent(self, event):
-        print('Mouse pressed')
+        print(event.pos())
         super().mousePressEvent(event)
     
     def keyPressEvent(self, event):
@@ -29,6 +35,8 @@ class SimulationManager(QDialog):
     def __init__(self, height, width, *args, **kwargs):
         self.app = QApplication([])
         super().__init__(*args, **kwargs)
+        self.height = height
+        self.width = width
         self.setWindowTitle('Simulation Window')
         self.setLayout(QVBoxLayout())
         self.scene = QGraphicsScene(self)
@@ -37,6 +45,7 @@ class SimulationManager(QDialog):
         self.view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.view.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
         self.resize(height, width)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.view)
         self.scene.setSceneRect(0, 0, self.view.width(), self.view.height())
         self.view.setSceneRect(0, 0, self.view.width(), self.view.height())
@@ -49,8 +58,14 @@ class SimulationManager(QDialog):
     
     def create_circle(self, x, y, radius, color):
         circle = QGraphicsEllipseItem(x, y, 2 * radius, 2 * radius)
-        circle.setPen(QPen(QBrush(Qt.red), 1))
+        circle.setPen(QPen(QBrush(color_map[color] if color in color_map else Qt.red), 1))
         self.scene.addItem(circle)
+        return circle
 
-def get_random_position():
-    return (random.randint(0, maxX), random.randint(0, maxY))
+    def get_random_position_on_window(self):
+        return (random.randint(0, self.height), random.randint(0, self.width))
+
+    def wait(self, t):
+        import time
+        self.refresh_window()
+        time.sleep(t)
