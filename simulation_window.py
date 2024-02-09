@@ -32,21 +32,20 @@ class QGraphicsViewWMouse(QGraphicsView):
             self.close()
 
 class SimulationManager(QDialog):
-    def __init__(self, height, width, *args, **kwargs):
+    def __init__(self, width, height, *args, **kwargs):
         self.app = QApplication([])
         super().__init__(*args, **kwargs)
-        self.height = height
-        self.width = width
-        self.setWindowTitle('Simulation Window')
+        self.setWindowTitle("Simulation")
         self.setLayout(QVBoxLayout())
+        self.layout().setContentsMargins(2, 2, 2, 2)
         self.scene = QGraphicsScene(self)
         self.scene.setBackgroundBrush(Qt.black)
         self.view = QGraphicsViewWMouse(self.scene, self)
-        self.view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.view.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.view.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.view.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
-        self.resize(height, width)
-        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.view)
+        self.resize(width, height)
         self.scene.setSceneRect(0, 0, self.view.width(), self.view.height())
         self.view.setSceneRect(0, 0, self.view.width(), self.view.height())
         self.show()
@@ -56,16 +55,19 @@ class SimulationManager(QDialog):
         self.scene.update()
         qApp.processEvents()
     
-    def create_circle(self, x, y, radius, color):
-        circle = QGraphicsEllipseItem(x, y, 2 * radius, 2 * radius)
-        circle.setPen(QPen(QBrush(color_map[color] if color in color_map else Qt.red), 1))
-        self.scene.addItem(circle)
-        return circle
-
     def get_random_position_on_window(self):
-        return (random.randint(0, self.height), random.randint(0, self.width))
+        return random.randint(0, self.view.width()), random.randint(0, self.view.height())
 
     def wait(self, t):
         import time
         self.refresh_window()
         time.sleep(t)
+
+    def add_item_to_scene(self, item):
+        self.scene.addItem(item)
+
+def create_circle(x, y, radius, color):
+    circle = QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius)
+    circle.setPen(QPen(QBrush(color_map[color] if color in color_map else Qt.red), 1))
+    circle.setPos(x, y)
+    return circle
