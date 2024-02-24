@@ -1,5 +1,8 @@
 from simulation_window import SimulationManager
 from agent import Agent
+from gui import show_gui
+
+show_gui()
 
 a = SimulationManager(1000, 1000)
 
@@ -19,7 +22,7 @@ for x in agents[:10]:
 def find_agents_close_to_infected_agent(agent, agents):
     close_agents = []
     for other_agent in agents:
-        if not other_agent.is_infected and  agent != other_agent and agent.is_in_radius(other_agent,50):
+        if not other_agent.is_infected and agent != other_agent and agent.is_in_radius(other_agent,50):
             close_agents.append(other_agent)
     return close_agents
 
