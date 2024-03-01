@@ -34,6 +34,9 @@ while True:
                 if agent != other_agent and agent.is_in_radius(other_agent):
                     if not other_agent.is_infected:
                         other_agent.infect()
-        agent.move()
+        if not agent.move():
+            a.remove_item_from_scene(agent.circle)
+            agents.remove(agent)
+            continue
     a.refresh_window()
     a.wait(0.01)
