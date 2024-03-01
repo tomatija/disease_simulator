@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.run_simulation = False
         self.initUI()
 
     def initUI(self):
@@ -63,6 +64,7 @@ class MyWindow(QWidget):
         self.resistanceLabel.setText(f'Resistance: {value}')
 
     def startPressed(self):
+        self.run_simulation = True
         self.close()  # This will hide the window and trigger closing.
 
 
@@ -71,4 +73,5 @@ def show_gui():
     window = MyWindow()
     window.show()
     app.exec_()  # This will make sure the code waits for the GUI to close.
+    return window.run_simulation
     
