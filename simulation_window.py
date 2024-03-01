@@ -65,6 +65,9 @@ class SimulationManager(QDialog):
 
     def add_item_to_scene(self, item):
         self.scene.addItem(item)
+    
+    def remove_item_from_scene(self, item):
+        self.scene.removeItem(item)
 
 def create_circle(x, y, radius, color):
     circle = QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius)
