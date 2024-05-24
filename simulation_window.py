@@ -35,11 +35,11 @@ class SimulationManager(QDialog):
     def __init__(self, width, height, *args, **kwargs):
         self.app = QApplication([])
         super().__init__(*args, **kwargs)
-        self.setWindowTitle("Simulation")
+        self.setWindowTitle("Simulacijs")
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.scene = QGraphicsScene(self)
-        self.scene.setBackgroundBrush(Qt.black)
+        self.scene.setBackgroundBrush(Qt.white)
         self.view = QGraphicsViewWMouse(self.scene, self)
         self.view.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.view.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
@@ -68,9 +68,12 @@ class SimulationManager(QDialog):
     
     def remove_item_from_scene(self, item):
         self.scene.removeItem(item)
+    
+    def is_in_scene(self, item):
+        return item in self.scene.items()
 
 def create_circle(x, y, radius, color):
     circle = QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius)
-    circle.setPen(QPen(QBrush(color_map[color] if color in color_map else Qt.red), 1))
+    circle.setPen(QPen(QBrush(color_map[color] if color in color_map else Qt.red), 3))
     circle.setPos(x, y)
     return circle
