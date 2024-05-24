@@ -22,7 +22,7 @@ def run_simulation():
 
     for x in agents[:5]:
         infected_agents.append(x)
-        x.infect(True)
+        x.infect()
 
     def find_agents_close_to_infected_agent(agent, agents):
         close_agents = []

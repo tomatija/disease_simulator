@@ -30,6 +30,8 @@ class Agent:
         self.imune_time_limit = random.uniform(50, 100)
 
         self.direction_change_interval = 5
+
+        self.is_dead = False
     
     def infect(self):
         self.is_infected = True
@@ -70,6 +72,9 @@ class Agent:
             self.direction = self.direction + random.uniform((-math.pi / 9), (math.pi / 9))
         if self.is_infected and self.infected_time > self.infection_time_limit:
             if self.check_for_death():
+                self.is_dead = True
+                self.is_infected = False
+                self.is_imune = False
                 return False
             self.set_imune()
         if self.is_imune and self.imune_time > self.imune_time_limit:
