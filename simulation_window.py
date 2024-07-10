@@ -45,9 +45,9 @@ class SimulationManager(QDialog):
         self.view.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.view.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
         self.layout().addWidget(self.view)
-        self.resize(width, height)
-        self.scene.setSceneRect(0, 0, self.view.width(), self.view.height())
-        self.view.setSceneRect(0, 0, self.view.width(), self.view.height())
+        self.resize(width, height)  # Increase the window size by 100px both width and height
+        self.scene.setSceneRect(0, 0, width, height)  # Keep the scene size the same as before
+        self.view.setSceneRect(0, 0, width, height)  # Ensure view scene rect matches scene rect
         self.show()
         self.raise_()
     

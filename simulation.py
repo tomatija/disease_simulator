@@ -2,19 +2,21 @@ from simulation_window import SimulationManager
 from agent import Agent
 from gui import show_gui
 import csv
-sim_stops = [(5, True), (70, True), (0, True)]
+
+total_agents = 500
+sim_stops = [150, 100]
 
 def run_simulation():
     if not show_gui():
         return
 
-    a = SimulationManager(700, 700)
+    a = SimulationManager(500, 500)
 
     agents = []
 
     infected_agents = []
 
-    for index in range(200):
+    for index in range(total_agents):
         x, y = a.get_random_position_on_window()
         new_agent = Agent(x, y, 5, 'green', a.view.width(), a.view.height())
         a.add_item_to_scene(new_agent.circle)
@@ -22,7 +24,7 @@ def run_simulation():
 
     for x in agents[:5]:
         infected_agents.append(x)
-        x.infect()
+        x.infect(True)
 
     def find_agents_close_to_infected_agent(agent, agents):
         close_agents = []
@@ -48,6 +50,7 @@ def run_simulation():
     dead_agent_count = 0
     csv_rows = []
     fields = ["time", "zdravi_agenti", "okuzeni_agenti", "mrtvi_agenti", "imuni_agenti"]
+    a.resize(500 + 20, 500 + 20)
     while True:
         for agent in agents:
             if not agent.is_infected and agent in infected_agents:

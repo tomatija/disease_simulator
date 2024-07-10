@@ -18,34 +18,53 @@ class Agent:
         self.circle = create_circle(x, y, r, color)
         self.direction = random.uniform(0, 2 * math.pi)
         self.speed = random.uniform(1, 3)
-        self.death_chance = 100
+        self.death_chance = 20
 
         self.is_infected = False
         self.infected_time = 0
         self.infection_radius = 10
-        self.infection_time_limit = random.uniform(200, 1000)
+        self.infection_time_limit = random.uniform(300, 700)
+        self.infection_change = 90
+
+        self.can_be_infected = True
+        self.cannot_be_infected_time = 0
+        self.cannot_be_infected_time_limit = random.uniform(100, 200)
 
         self.is_imune = False
         self.imune_time = 0
-        self.imune_time_limit = random.uniform(50, 100)
+        self.imune_time_limit = random.uniform(300, 500)
+        self.imune_chance = 50
 
         self.direction_change_interval = 5
 
         self.is_dead = False
     
-    def infect(self):
-        self.is_infected = True
-        self.circle.setPen(QPen(QBrush(Qt.red), 1))
+    def infect(self, override=False):
+        if override:
+            self.is_infected = True
+            self.circle.setPen(QPen(QBrush(Qt.red), 3))
+            return
+        if random.uniform(0, 100) < self.infection_change and self.can_be_infected:
+            self.is_infected = True
+            self.circle.setPen(QPen(QBrush(Qt.red), 3))
+        else:
+            self.can_be_infected = False
+            self.cannot_be_infected_time += 1
+            if self.cannot_be_infected_time > self.cannot_be_infected_time_limit:
+                self.can_be_infected = True
+                self.cannot_be_infected_time = 0
+
     
     def set_imune(self):
         self.is_infected = False
         self.is_imune = True
-        self.circle.setPen(QPen(QBrush(Qt.blue), 1))
+        self.circle.setPen(QPen(QBrush(Qt.black), 3))
         self.imune_time = 0
     
     def cure(self):
         self.is_imune = False
-        self.circle.setPen(QPen(QBrush(Qt.green), 1))
+        self.is_infected = False
+        self.circle.setPen(QPen(QBrush(Qt.green), 3))
         self.infected_time = 0
 
     def is_in_radius(self, other_agent, radius=10):
@@ -76,14 +95,28 @@ class Agent:
                 self.is_infected = False
                 self.is_imune = False
                 return False
-            self.set_imune()
+            if random.uniform(0, 100) < self.imune_chance:
+                self.set_imune()
+            else:
+                self.cure()
         if self.is_imune and self.imune_time > self.imune_time_limit:
             self.cure()
         self.circle.setPos(x, y)
         return True
     
     def check_wall_collision(self, x, y, width, height):
-        if x >= width or x < 0:
-            self.direction = math.pi - self.direction
-        if y >= height or y < 0:
-            self.direction = (-self.direction if y < 0 else 2 * math.pi - self.direction)
+            # Check horizontal walls
+        if x < self.r:
+            x = self.r  # Reset position to be within bounds if it goes past the left wall.
+            self.direction = math.pi - self.direction  # Reflect the direction horizontally.
+        elif x > width - self.r:
+            x = width - self.r  # Reset position to be within bounds if it goes past the right wall.
+            self.direction = math.pi - self.direction  # Reflect the direction horizontally.
+
+        # Check vertical walls
+        if y < self.r:
+            y = self.r  # Reset position to be within bounds if it goes past the top wall.
+            self.direction = -self.direction  # Reflect the direction vertically.
+        elif y > height - self.r:
+            y = height - self.r  # Reset position to be within bounds if it goes past the bottom wall.
+            self.direction = 2 * math.pi - self.direction
